@@ -1,4 +1,5 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 import {
     AppBar,
     Toolbar,
@@ -17,6 +18,7 @@ const MotionBox = motion(Box);
 const MotionCard = motion(Card);
 
 const LandingPage = () => {
+    const navigate = useNavigate();
     return (
         <>
             {/* Navbar */}
@@ -25,7 +27,7 @@ const LandingPage = () => {
                     <Typography variant="h6" sx={{ flexGrow: 1, fontWeight: "bold" }}>
                         CampusConnect
                     </Typography>
-                    <Button color="inherit">Login</Button>
+                    <Button color="inherit" onClick={() => { navigate('/login') }}>Login</Button>
                     <Button variant="outlined" color="inherit">
                         Register
                     </Button>
@@ -63,7 +65,7 @@ const LandingPage = () => {
                             >
                                 Get Started
                             </Button>
-                            <Button variant="outlined" size="large" color="inherit">
+                            <Button variant="outlined" size="large" color="inherit" onClick={() => { navigate('/learn-more') }}>
                                 Learn More
                             </Button>
                         </Grid>
@@ -168,3 +170,4 @@ const LandingPage = () => {
 };
 
 export default LandingPage;
+

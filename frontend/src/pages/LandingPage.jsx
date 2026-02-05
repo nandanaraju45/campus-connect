@@ -28,7 +28,7 @@ const LandingPage = () => {
                         CampusConnect
                     </Typography>
                     <Button color="inherit" onClick={() => { navigate('/login') }}>Login</Button>
-                    <Button variant="outlined" color="inherit">
+                    <Button variant="outlined" color="inherit" onClick={() => useNavigate('/register')}>
                         Register
                     </Button>
                 </Toolbar>
@@ -62,6 +62,7 @@ const LandingPage = () => {
                                 variant="contained"
                                 size="large"
                                 sx={{ mr: 2, backgroundColor: "#fff", color: "#1976d2" }}
+                                onClick={() => { navigate('/register') }}
                             >
                                 Get Started
                             </Button>

@@ -10,11 +10,13 @@ import {
     Button
 } from "@mui/material";
 import { motion } from "framer-motion";
+import { useNavigate } from "react-router-dom";
 
 const MotionBox = motion(Box);
 const MotionCard = motion(Card);
 
 const LearnMorePage = () => {
+    const navigate = useNavigate();
     return (
         <>
             {/* Hero Section */}
@@ -67,6 +69,11 @@ const LearnMorePage = () => {
                             img: "https://cdn-icons-png.flaticon.com/512/747/747310.png",
                             desc: "View and register for campus events easily."
                         },
+                        {
+                            title: "Event Participation",
+                            img: "https://cdn-icons-png.flaticon.com/512/3135/3135755.png",
+                            desc: "Join events that match your interests and passions."
+                        }
                     ].map((item, index) => (
                         <Grid item xs={12} md={4} key={index}>
                             <MotionCard
@@ -75,7 +82,8 @@ const LearnMorePage = () => {
                                 sx={{
                                     height: "100%",
                                     borderRadius: 3,
-                                    boxShadow: 4
+                                    boxShadow: 4,
+                                    width: 360
                                 }}
                             >
                                 <CardMedia
@@ -117,7 +125,7 @@ const LearnMorePage = () => {
                     <Typography color="text.secondary" paragraph>
                         Join today and make your campus life more connected and efficient.
                     </Typography>
-                    <Button variant="contained" size="large">
+                    <Button variant="contained" size="large" onClick={() => navigate("/register")}>
                         Get Started
                     </Button>
                 </Container>

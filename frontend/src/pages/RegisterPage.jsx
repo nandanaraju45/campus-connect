@@ -28,7 +28,6 @@ const departments = [
     "Electronics",
     "English",
     "Commerce",
-    "PW"
 ];
 
 const RegisterPage = () => {

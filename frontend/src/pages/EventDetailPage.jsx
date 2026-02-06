@@ -56,13 +56,17 @@ const EventDetailPage = () => {
 
     /* ---------- Fetch Event ---------- */
     const fetchEvent = async () => {
-        const res = await axios.get(`http://localhost:5000/api/events/${id}`);
+        const res = await axios.get(
+            `http://localhost:5000/api/events/${id}`
+        );
         setEvent(res.data);
     };
 
     /* ---------- Fetch Items ---------- */
     const fetchItems = async () => {
-        const res = await axios.get(`http://localhost:5000/api/items/event/${id}`);
+        const res = await axios.get(
+            `http://localhost:5000/api/items/event/${id}`
+        );
         setItems(res.data);
     };
 
@@ -80,10 +84,7 @@ const EventDetailPage = () => {
                 ...prev,
                 [itemId]: res.data,
             }));
-
-            console.log(`Participants for item ${itemId}:`, res.data);
-        } catch (err) {
-            console.error(err);
+        } catch {
             setParticipants((prev) => ({
                 ...prev,
                 [itemId]: [],
@@ -111,12 +112,15 @@ const EventDetailPage = () => {
         }
     };
 
-    /* ---------- Free Item Registration ---------- */
+    /* ---------- Free Registration ---------- */
     const handleRegister = async (item) => {
         try {
             await axios.post(
                 "http://localhost:5000/api/registrations",
-                { eventItem: item._id },
+                {
+                    eventItem: item._id,
+                    paymentStatus: true, // ✅ free = paid
+                },
                 { headers: { Authorization: `Bearer ${token}` } }
             );
 
@@ -129,39 +133,32 @@ const EventDetailPage = () => {
 
             setSnackbar({
                 open: true,
-                message: "Registered successfully",
+                message: "Registered successfully 🎉",
                 severity: "success",
             });
         } catch (err) {
-            console.error(err);
             setSnackbar({
                 open: true,
-                message: err.response?.data?.message || "Registration failed",
+                message:
+                    err.response?.data?.message ||
+                    "Registration failed",
                 severity: "error",
             });
         }
     };
 
-    /* ---------- Load Event, Items, Participants ---------- */
+    /* ---------- Initial Load ---------- */
     useEffect(() => {
         const load = async () => {
             await fetchEvent();
             await fetchItems();
-
-            // Fetch participants for all items immediately
-            for (const item of items) {
-                await fetchParticipants(item._id);
-                await fetchResult(item._id);
-            }
-
             setLoading(false);
         };
         load();
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [id, items.length]);
+        // eslint-disable-next-line
+    }, [id]);
 
     if (loading) return <CircularProgress />;
-
     if (!event) return <Typography>Event not found</Typography>;
 
     return (
@@ -175,7 +172,7 @@ const EventDetailPage = () => {
                 Back
             </Button>
 
-            {/* ---------- Event ---------- */}
+            {/* ---------- Event Card ---------- */}
             <Card sx={{ mb: 4, borderRadius: 3 }}>
                 <CardContent>
                     <Stack direction="row" spacing={1} alignItems="center">
@@ -185,16 +182,24 @@ const EventDetailPage = () => {
                         </Typography>
                     </Stack>
 
-                    <Typography sx={{ mt: 2 }}>{event.description}</Typography>
+                    <Typography sx={{ mt: 2 }}>
+                        {event.description}
+                    </Typography>
 
                     <Stack direction="row" spacing={2} mt={2}>
                         <Chip label={`Venue: ${event.venue}`} />
                         <Chip
-                            label={new Date(event.date).toLocaleDateString()}
+                            label={new Date(
+                                event.date
+                            ).toLocaleDateString()}
                         />
                         <Chip
                             label={event.status.toUpperCase()}
-                            color={event.status === "open" ? "success" : "error"}
+                            color={
+                                event.status === "open"
+                                    ? "success"
+                                    : "error"
+                            }
                         />
                     </Stack>
                 </CardContent>
@@ -207,9 +212,10 @@ const EventDetailPage = () => {
 
             <Grid container spacing={2}>
                 {items.map((item) => {
-                    const registered = participants[item._id]?.some(
-                        (p) => p.student._id === user._id
-                    );
+                    const registered =
+                        participants[item._id]?.some(
+                            (p) => p.student._id === user?._id
+                        );
 
                     return (
                         <Grid item xs={12} key={item._id}>
@@ -219,88 +225,209 @@ const EventDetailPage = () => {
                                     fetchResult(item._id);
                                 }}
                             >
-                                <AccordionSummary expandIcon={<ExpandMore />}>
-                                    <Stack direction="row" spacing={2}>
-                                        <Typography fontWeight={600}>{item.name}</Typography>
-                                        <Chip label={`Fee ₹${item.fee || 0}`} />
+                                <AccordionSummary
+                                    expandIcon={<ExpandMore />}
+                                >
+                                    <Stack
+                                        direction="row"
+                                        spacing={2}
+                                        alignItems="center"
+                                    >
+                                        <Typography fontWeight={600}>
+                                            {item.name}
+                                        </Typography>
+
+                                        <Chip
+                                            label={
+                                                item.fee === 0
+                                                    ? "FREE"
+                                                    : `₹${item.fee}`
+                                            }
+                                            color={
+                                                item.fee === 0
+                                                    ? "success"
+                                                    : "warning"
+                                            }
+                                        />
+
+                                        {registered && (
+                                            <Chip
+                                                label="Registered"
+                                                color="success"
+                                                size="small"
+                                            />
+                                        )}
                                     </Stack>
                                 </AccordionSummary>
 
                                 <AccordionDetails>
+                                    {/* ---------- Registration Box ---------- */}
+                                    {isStudent && !registered && (
+                                        <Box
+                                            sx={{
+                                                p: 2,
+                                                mb: 2,
+                                                borderRadius: 2,
+                                                border: "1px dashed",
+                                                borderColor:
+                                                    item.fee === 0
+                                                        ? "success.main"
+                                                        : "warning.main",
+                                                // bgcolor:
+                                                //     item.fee === 0
+                                                //         ? "success.light"
+                                                //         : "warning.light",
+                                            }}
+                                        >
+                                            <Typography
+                                                fontWeight={600}
+                                                mb={1}
+                                            >
+                                                Registration
+                                            </Typography>
+
+                                            {item.fee === 0 ? (
+                                                <Button
+                                                    fullWidth
+                                                    variant="contained"
+                                                    color="success"
+                                                    onClick={() =>
+                                                        handleRegister(item)
+                                                    }
+                                                >
+                                                    Register for Free
+                                                </Button>
+                                            ) : (
+                                                <>
+                                                    <Typography
+                                                        variant="body2"
+                                                        mb={1}
+                                                    >
+                                                        Complete payment to
+                                                        register
+                                                    </Typography>
+
+                                                    <PayPalScriptProvider
+                                                        options={{
+                                                            "client-id":
+                                                                paypalClientId,
+                                                            currency: "USD",
+                                                        }}
+                                                    >
+                                                        <PayPalButtons
+                                                            style={{
+                                                                layout:
+                                                                    "vertical",
+                                                            }}
+                                                            createOrder={async () => {
+                                                                const res =
+                                                                    await axios.post(
+                                                                        "http://localhost:5000/api/registrations/paypal/create",
+                                                                        {
+                                                                            eventItemId:
+                                                                                item._id,
+                                                                        },
+                                                                        {
+                                                                            headers: {
+                                                                                Authorization: `Bearer ${token}`,
+                                                                            },
+                                                                        }
+                                                                    );
+                                                                return res.data.id;
+                                                            }}
+                                                            onApprove={async (
+                                                                data
+                                                            ) => {
+                                                                await axios.post(
+                                                                    "http://localhost:5000/api/registrations/paypal/capture",
+                                                                    {
+                                                                        orderId:
+                                                                            data.orderID,
+                                                                        eventItemId:
+                                                                            item._id,
+                                                                        paymentStatus:
+                                                                            true,
+                                                                    },
+                                                                    {
+                                                                        headers: {
+                                                                            Authorization: `Bearer ${token}`,
+                                                                        },
+                                                                    }
+                                                                );
+
+                                                                setParticipants(
+                                                                    (
+                                                                        prev
+                                                                    ) => ({
+                                                                        ...prev,
+                                                                        [item._id]:
+                                                                            prev[
+                                                                                item._id
+                                                                            ]
+                                                                                ? [
+                                                                                    ...prev[
+                                                                                    item._id
+                                                                                    ],
+                                                                                    {
+                                                                                        student:
+                                                                                            user,
+                                                                                    },
+                                                                                ]
+                                                                                : [
+                                                                                    {
+                                                                                        student:
+                                                                                            user,
+                                                                                    },
+                                                                                ],
+                                                                    })
+                                                                );
+
+                                                                setSnackbar({
+                                                                    open: true,
+                                                                    message:
+                                                                        "Payment successful & registered 🎉",
+                                                                    severity:
+                                                                        "success",
+                                                                });
+                                                            }}
+                                                        />
+                                                    </PayPalScriptProvider>
+                                                </>
+                                            )}
+                                        </Box>
+                                    )}
+
+                                    {registered && (
+                                        <Alert
+                                            severity="success"
+                                            sx={{ mb: 2 }}
+                                        >
+                                            You are already registered
+                                        </Alert>
+                                    )}
+
                                     {/* ---------- Participants ---------- */}
-                                    <Typography fontWeight={600} mb={1}>
+                                    <Typography fontWeight={600}>
                                         Participants
                                     </Typography>
 
                                     {participants[item._id]?.length ? (
-                                        participants[item._id].map((p) => (
-                                            <Typography key={p._id || p.student._id}>
-                                                {p.student.name}
-                                            </Typography>
-                                        ))
+                                        participants[item._id].map(
+                                            (p) => (
+                                                <Typography
+                                                    key={
+                                                        p._id ||
+                                                        p.student._id
+                                                    }
+                                                >
+                                                    {p.student.name}
+                                                </Typography>
+                                            )
+                                        )
                                     ) : (
-                                        <Typography color="text.secondary">No participants</Typography>
-                                    )}
-
-                                    {/* ---------- Registration ---------- */}
-                                    {isStudent && !registered && (
-                                        <>
-                                            {item.fee === 0 ? (
-                                                <Button
-                                                    variant="contained"
-                                                    sx={{ mt: 2 }}
-                                                    onClick={() => handleRegister(item)}
-                                                >
-                                                    Register
-                                                </Button>
-                                            ) : (
-                                                <PayPalScriptProvider
-                                                    options={{
-                                                        "client-id": paypalClientId,
-                                                        currency: "INR",
-                                                    }}
-                                                >
-                                                    <PayPalButtons
-                                                        createOrder={async () => {
-                                                            const res = await axios.post(
-                                                                "http://localhost:5000/api/registrations/paypal/create",
-                                                                { eventItemId: item._id },
-                                                                { headers: { Authorization: `Bearer ${token}` } }
-                                                            );
-                                                            return res.data.id;
-                                                        }}
-                                                        onApprove={async (data) => {
-                                                            await axios.post(
-                                                                "http://localhost:5000/api/registrations/paypal/capture",
-                                                                { orderId: data.orderID, eventItemId: item._id },
-                                                                { headers: { Authorization: `Bearer ${token}` } }
-                                                            );
-
-                                                            setParticipants((prev) => ({
-                                                                ...prev,
-                                                                [item._id]: prev[item._id]
-                                                                    ? [...prev[item._id], { student: user }]
-                                                                    : [{ student: user }],
-                                                            }));
-
-                                                            setSnackbar({
-                                                                open: true,
-                                                                message: "Payment & registration successful",
-                                                                severity: "success",
-                                                            });
-                                                        }}
-                                                        onError={(err) => {
-                                                            console.error(err);
-                                                            setSnackbar({
-                                                                open: true,
-                                                                message: "Payment failed",
-                                                                severity: "error",
-                                                            });
-                                                        }}
-                                                    />
-                                                </PayPalScriptProvider>
-                                            )}
-                                        </>
+                                        <Typography color="text.secondary">
+                                            No participants
+                                        </Typography>
                                     )}
 
                                     <Divider sx={{ my: 2 }} />
@@ -308,7 +435,6 @@ const EventDetailPage = () => {
                                     {/* ---------- Results ---------- */}
                                     <Typography
                                         fontWeight={600}
-                                        mb={1}
                                         display="flex"
                                         alignItems="center"
                                         gap={1}
@@ -318,20 +444,29 @@ const EventDetailPage = () => {
                                     </Typography>
 
                                     {results[item._id]?.positions ? (
-                                        results[item._id].positions.map((r) => (
-                                            <Typography key={r._id}>
-                                                {r.position}️⃣ {r.student.name}
-                                            </Typography>
-                                        ))
+                                        results[item._id].positions.map(
+                                            (r) => (
+                                                <Typography key={r._id}>
+                                                    {r.position}️⃣{" "}
+                                                    {r.student.name}
+                                                </Typography>
+                                            )
+                                        )
                                     ) : isFacultyOrAdmin ? (
                                         <Button
                                             variant="outlined"
-                                            onClick={() => navigate(`/publish-result/${item._id}`)}
+                                            onClick={() =>
+                                                navigate(
+                                                    `/publish-result/${item._id}`
+                                                )
+                                            }
                                         >
                                             Publish Result
                                         </Button>
                                     ) : (
-                                        <Typography color="text.secondary">Results not published</Typography>
+                                        <Typography color="text.secondary">
+                                            Results not published
+                                        </Typography>
                                     )}
                                 </AccordionDetails>
                             </Accordion>
@@ -345,13 +480,10 @@ const EventDetailPage = () => {
                 open={snackbar.open}
                 autoHideDuration={3000}
                 onClose={() =>
-                    setSnackbar((prev) => ({ ...prev, open: false }))
+                    setSnackbar((p) => ({ ...p, open: false }))
                 }
             >
                 <Alert
-                    onClose={() =>
-                        setSnackbar((prev) => ({ ...prev, open: false }))
-                    }
                     severity={snackbar.severity}
                     sx={{ width: "100%" }}
                 >
@@ -363,3 +495,5 @@ const EventDetailPage = () => {
 };
 
 export default EventDetailPage;
+
+

@@ -34,25 +34,39 @@ const FacultyAllEvents = () => {
                     </Typography>
                 ) : (
                     events.map((event) => (
-                        <Grid item xs={12} md={6} lg={4} key={event._id}>
+                        <Grid
+                            item
+                            xs={12}
+                            sm={6}
+                            md={4}
+                            lg={3}
+                            key={event._id}
+                            display="flex"
+                            justifyContent="center"
+                        >
                             <Card
                                 elevation={4}
-                                onClick={() => navigate(`/events/${event._id}`)}
+                                onClick={() =>
+                                    navigate(`/events/${event._id}`)
+                                }
                                 sx={{
+                                    width: 320, // ✅ fixed width
+                                    height: 160,
                                     cursor: "pointer",
-                                    height: 220,
                                     display: "flex",
                                     flexDirection: "column",
                                     justifyContent: "space-between",
                                     padding: 2,
-                                    transition: "transform 0.2s, box-shadow 0.2s",
+                                    overflow: "hidden", // ✅ prevent stretch
+                                    transition:
+                                        "transform 0.2s ease, box-shadow 0.2s ease",
                                     "&:hover": {
                                         transform: "translateY(-5px)",
                                         boxShadow: 6,
                                     },
                                 }}
                             >
-                                <CardContent sx={{ flexGrow: 1 }}>
+                                <CardContent sx={{ flexGrow: 1, p: 0 }}>
                                     <Typography
                                         fontWeight={600}
                                         variant="h6"
@@ -85,12 +99,21 @@ const FacultyAllEvents = () => {
                                 <Box mt={1}>
                                     <Chip
                                         label={event.status}
+                                        size="small"
                                         color={
                                             event.status === "open"
                                                 ? "success"
                                                 : "error"
                                         }
-                                        size="small"
+                                        sx={{
+                                            maxWidth: 120,
+                                            "& .MuiChip-label": {
+                                                overflow: "hidden",
+                                                textOverflow: "ellipsis",
+                                                whiteSpace: "nowrap",
+                                            },
+                                        }}
+                                        title={event.status}
                                     />
                                 </Box>
                             </Card>

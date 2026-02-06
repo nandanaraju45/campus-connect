@@ -28,7 +28,7 @@ const LandingPage = () => {
                         CampusConnect
                     </Typography>
                     <Button color="inherit" onClick={() => { navigate('/login') }}>Login</Button>
-                    <Button variant="outlined" color="inherit" onClick={() => useNavigate('/register')}>
+                    <Button variant="outlined" color="inherit" onClick={() => navigate('/register')}>
                         Register
                     </Button>
                 </Toolbar>
@@ -103,6 +103,11 @@ const LandingPage = () => {
                             img: "https://cdn-icons-png.flaticon.com/512/747/747310.png",
                             desc: "Never miss workshops, fests, or important events."
                         },
+                        {
+                            title: "Participate in events",
+                            img: "https://cdn-icons-png.flaticon.com/512/3135/3135755.png",
+                            desc: "Join events that match your interests and passions."
+                        }
 
                     ].map((item, index) => (
                         <Grid item xs={12} md={4} key={index}>
@@ -112,7 +117,8 @@ const LandingPage = () => {
                                 sx={{
                                     height: "100%",
                                     boxShadow: 4,
-                                    borderRadius: 3
+                                    borderRadius: 3,
+                                    width: 360
                                 }}
                             >
                                 <CardMedia
@@ -154,7 +160,7 @@ const LandingPage = () => {
                     <Typography paragraph>
                         Make your campus experience smarter, simpler, and more connected.
                     </Typography>
-                    <Button variant="contained" size="large">
+                    <Button variant="contained" size="large" onClick={() => navigate("/register")}>
                         Sign Up Now
                     </Button>
                 </Container>

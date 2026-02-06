@@ -1,4 +1,4 @@
-import React from "react";
+import React, { use } from "react";
 import {
     Box,
     Button,
@@ -14,6 +14,7 @@ import { Email, Lock, Visibility, VisibilityOff } from "@mui/icons-material";
 import { motion } from "framer-motion";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
 
 const LoginPage = () => {
     const [email, setEmail] = React.useState("");
@@ -21,6 +22,8 @@ const LoginPage = () => {
     const [showPassword, setShowPassword] = React.useState(false);
     const [error, setError] = React.useState("");
     const [loading, setLoading] = React.useState(false);
+
+    const { setUser } = useAuth();
 
     const navigate = useNavigate();
 
@@ -37,7 +40,7 @@ const LoginPage = () => {
 
             // Save token & user
             localStorage.setItem("token", res.data.token);
-            localStorage.setItem("user", JSON.stringify(res.data.user));
+            setUser(res.data.user);
 
             // Redirect based on role
             const role = res.data.user.role;

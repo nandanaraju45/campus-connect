@@ -28,10 +28,20 @@ export const deleteItem = async (req, res) => {
     res.json({ message: "Item deleted" });
 };
 
+export const getItemById = async (req, res) => {
+    try {
+        const EventItem = await EventItem.findById(req.params.itemId);
+        if (!EventItem) return res.status(404).json({ message: "Item not found" });
+        res.json(EventItem);
+    } catch (err) {
+        res.status(500).json({ message: err.message });
+        console.error(err);
+    }
+};
+
 export const getParticipants = async (req, res) => {
     const participants = await Registration.find({
         eventItem: req.params.itemId,
-        paymentStatus: "paid",
     }).populate("student", "name email");
     res.json(participants);
 };

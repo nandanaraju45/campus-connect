@@ -1,204 +1,103 @@
-import * as React from "react";
+import { useState } from "react";
 import ResponsiveLayout from "../components/ResponsiveLayout";
+import { useAuth } from "../context/AuthContext";
 
 import {
     Box,
     List,
-    ListItem,
     ListItemButton,
     ListItemIcon,
     ListItemText,
     Typography,
-    Paper,
-    Grid
+    Divider,
+    Dialog,
+    DialogTitle,
+    DialogContent,
+    DialogActions,
+    Button,
 } from "@mui/material";
 
-import {
-    School,
-    ReportProblem,
-    Settings,
-    AccountBalance,
-    HowToReg
-} from "@mui/icons-material";
+import { Dashboard, Event, Logout } from "@mui/icons-material";
 
-function AdminHomePage() {
-    /* Drawer Content */
+import AdminDashboard from "../components/admin/AdminDashboard";
+import AdminEvents from "../components/admin/AdminEvents";
+
+const AdminHomePage = () => {
+    const [activePage, setActivePage] = useState("dashboard");
+    const [openLogoutDialog, setOpenLogoutDialog] = useState(false); // state for dialog
+    const { logout } = useAuth();
+
     const drawerContent = (
-    <Box>
-        <Typography
-            variant="h6"
-            sx={{ p: 2, fontWeight: "bold", textAlign: "center" }}
-        >
-            Admin Panel
-        </Typography>
+        <Box>
+            <Typography variant="h6" sx={{ p: 2, fontWeight: 700 }}>
+                Admin Panel
+            </Typography>
+            <Divider />
 
-        <List>
-            {/* Add College */}
-            <ListItem disablePadding>
-                <ListItemButton>
+            <List>
+                <ListItemButton
+                    selected={activePage === "dashboard"}
+                    onClick={() => setActivePage("dashboard")}
+                >
                     <ListItemIcon>
-                        <School />
+                        <Dashboard />
                     </ListItemIcon>
-                    <ListItemText primary="Add College" />
+                    <ListItemText primary="Dashboard" />
                 </ListItemButton>
-            </ListItem>
 
-            {/* View Colleges */}
-            <ListItem disablePadding>
-                <ListItemButton>
+                <ListItemButton
+                    selected={activePage === "events"}
+                    onClick={() => setActivePage("events")}
+                >
                     <ListItemIcon>
-                        <AccountBalance />
+                        <Event />
                     </ListItemIcon>
-                    <ListItemText primary="View Colleges" />
+                    <ListItemText primary="Events" />
                 </ListItemButton>
-            </ListItem>
 
-            {/* College Registration Requests */}
-            <ListItem disablePadding>
-                <ListItemButton>
-                    <ListItemIcon>
-                        <HowToReg />
-                    </ListItemIcon>
-                    <ListItemText primary="College Registration Requests" />
-                </ListItemButton>
-            </ListItem>
+                <Divider sx={{ my: 1 }} />
 
-            {/* View Complaints */}
-            <ListItem disablePadding>
-                <ListItemButton>
+                {/* Logout Button */}
+                <ListItemButton onClick={() => setOpenLogoutDialog(true)}>
                     <ListItemIcon>
-                        <ReportProblem />
+                        <Logout />
                     </ListItemIcon>
-                    <ListItemText primary="View Complaints" />
+                    <ListItemText primary="Logout" />
                 </ListItemButton>
-            </ListItem>
+            </List>
 
-            {/* Settings */}
-            <ListItem disablePadding>
-                <ListItemButton>
-                    <ListItemIcon>
-                        <Settings />
-                    </ListItemIcon>
-                    <ListItemText primary="Settings" />
-                </ListItemButton>
-            </ListItem>
-        </List>
-    </Box>
-);
+            {/* Logout Confirmation Dialog */}
+            <Dialog
+                open={openLogoutDialog}
+                onClose={() => setOpenLogoutDialog(false)}
+            >
+                <DialogTitle>Confirm Logout</DialogTitle>
+                <DialogContent>
+                    Are you sure you want to logout?
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={() => setOpenLogoutDialog(false)}>Cancel</Button>
+                    <Button
+                        color="error"
+                        variant="contained"
+                        onClick={() => {
+                            logout();
+                            setOpenLogoutDialog(false);
+                        }}
+                    >
+                        Logout
+                    </Button>
+                </DialogActions>
+            </Dialog>
+        </Box>
+    );
 
     return (
         <ResponsiveLayout drawerContent={drawerContent}>
-            {/* Welcome Section */}
-            <Paper
-                sx={{
-                    p: 4,
-                    mb: 4,
-                    borderRadius: 3,
-                    background: "linear-gradient(135deg, #1976d2, #42a5f5)",
-                    color: "white"
-                }}
-            >
-                <Typography variant="h4" fontWeight="bold">
-                    Welcome, Admin 👋
-                </Typography>
-                <Typography sx={{ mt: 1 }}>
-                    Manage colleges, monitor complaints, and control system settings
-                    from one place.
-                </Typography>
-            </Paper>
-
-            {/* Stats Cards */}
-            <Grid container spacing={3}>
-                <Grid item xs={12} md={6}>
-                    <Paper
-                        sx={{
-                            p: 3,
-                            borderRadius: 3,
-                            boxShadow: 4
-                        }}
-                    >
-                        <Box sx={{ display: "flex", alignItems: "center", mb: 1 }}>
-                            <School color="primary" sx={{ mr: 1 }} />
-                            <Typography variant="h6">Registered Colleges</Typography>
-                        </Box>
-
-                        <Typography variant="h3" fontWeight="bold">
-                            12
-                        </Typography>
-
-                        <Typography color="text.secondary">
-                            Colleges added to CampusConnect
-                        </Typography>
-                    </Paper>
-                </Grid>
-
-                <Grid item xs={12} md={6}>
-                    <Paper
-                        sx={{
-                            p: 3,
-                            borderRadius: 3,
-                            boxShadow: 4
-                        }}
-                    >
-                        <Box sx={{ display: "flex", alignItems: "center", mb: 1 }}>
-                            <HowToReg color="primary" sx={{ mr: 1 }} />
-                            <Typography variant="h6">Registration Requests</Typography>
-                        </Box>
-
-                        <Typography variant="h3" fontWeight="bold">
-                            12
-                        </Typography>
-
-                        <Typography color="text.secondary">
-                            Pending college registration requests
-                        </Typography>
-                    </Paper>
-                </Grid>
-
-                <Grid item xs={12} md={6}>
-                    <Paper
-                        sx={{
-                            p: 3,
-                            borderRadius: 3,
-                            boxShadow: 4
-                        }}
-                    >
-                        <Box sx={{ display: "flex", alignItems: "center", mb: 1 }}>
-                            <ReportProblem color="error" sx={{ mr: 1 }} />
-                            <Typography variant="h6">Pending Complaints</Typography>
-                        </Box>
-
-                        <Typography variant="h3" fontWeight="bold">
-                            5
-                        </Typography>
-
-                        <Typography color="text.secondary">
-                            Complaints waiting for review
-                        </Typography>
-                    </Paper>
-                </Grid>
-            </Grid>
-
-            {/* Info Section */}
-            <Paper
-                sx={{
-                    p: 3,
-                    mt: 4,
-                    borderRadius: 3
-                }}
-            >
-                <Typography variant="h6" fontWeight="bold" gutterBottom>
-                    Admin Responsibilities
-                </Typography>
-
-                <Typography color="text.secondary">
-                    As an administrator, you can add and manage colleges, review user
-                    complaints, and configure application settings to ensure smooth
-                    operation of CampusConnect across all institutions.
-                </Typography>
-            </Paper>
+            {activePage === "dashboard" && <AdminDashboard />}
+            {activePage === "events" && <AdminEvents />}
         </ResponsiveLayout>
     );
-}
+};
 
 export default AdminHomePage;

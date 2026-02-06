@@ -1,5 +1,6 @@
 import { Navigate, Outlet } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
+import PendingApprovalPage from "../pages/PendingApprovalPage";
 
 const ProtectedRoute = ({ allowedRoles }) => {
     const { user, loading } = useAuth();
@@ -8,12 +9,14 @@ const ProtectedRoute = ({ allowedRoles }) => {
 
     // ❌ Not logged in
     if (!user) {
-        return <Navigate to="/landing" replace />;
+        return <Navigate to="/" replace />;
     }
+
+    console.log("ProtectedRoute user:", user);
 
     // ⏳ Not approved
     if (user.approved === false) {
-        return <PendingApproval />;
+        return <PendingApprovalPage />;
     }
 
     // ❌ Role not allowed

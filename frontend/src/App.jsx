@@ -11,17 +11,29 @@ import FacultyHomePage from "./pages/FacultyHomePage";
 import StudentHomePage from "./pages/StudentHomePage";
 import Unauthorized from "./pages/Unauthorized";
 import ProtectedRoute from "./components/ProtectedRoute";
+import RootPage from "./pages/RootPage";
+import EventDetailPage from "./pages/EventDetailPage";
+import PublishResultPage from "./pages/PublishResultPage";
 
 const App = () => {
   return (
     <BrowserRouter>
       <Routes>
         {/* 🌐 Public routes */}
+        {/* <Route path="/" element={<RootPage />} /> */}
         <Route path="/" element={<LandingPage />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
         <Route path="/learn-more" element={<LearnMorePage />} />
         <Route path="/unauthorized" element={<Unauthorized />} />
+
+        <Route path="/events/:id" element={<ProtectedRoute allowedRoles={["student", "faculty", "admin"]} />} >
+          <Route path="" element={<EventDetailPage />} />
+        </Route>
+
+        <Route path="/publish-result/:itemId" element={<ProtectedRoute allowedRoles={["faculty", "admin"]} />} >
+          <Route path="" element={<PublishResultPage />} />
+        </Route>
 
         {/* 🔐 Admin protected */}
         <Route element={<ProtectedRoute allowedRoles={["admin"]} />}>

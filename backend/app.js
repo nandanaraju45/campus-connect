@@ -9,7 +9,6 @@ import adminRoutes from "./routes/adminRoutes.js";
 import eventRoutes from "./routes/eventRoutes.js";
 import itemRoutes from "./routes/itemRoutes.js";
 import registrationRoutes from "./routes/registrationRoutes.js";
-import paymentRoutes from "./routes/paymentRoutes.js";
 import resultRoutes from "./routes/resultRoutes.js";
 
 dotenv.config();
@@ -29,7 +28,6 @@ app.use("/api/admin", adminRoutes);
 app.use("/api/events", eventRoutes);
 app.use("/api/items", itemRoutes);
 app.use("/api/registrations", registrationRoutes);
-app.use("/api/payments", paymentRoutes);
 app.use("/api/results", resultRoutes);
 
 /* Test Route */

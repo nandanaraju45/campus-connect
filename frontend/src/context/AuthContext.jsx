@@ -17,7 +17,7 @@ export const AuthProvider = ({ children }) => {
         }
 
         try {
-            const res = await axios.get("/profile", {
+            const res = await axios.get("http://localhost:5000/api/auth/profile", {
                 headers: {
                     Authorization: `Bearer ${token}`,
                 },
@@ -48,8 +48,9 @@ export const AuthProvider = ({ children }) => {
                 user,
                 loading,
                 isAuthenticated: !!user,
+                setUser,
                 logout,
-                refreshProfile: fetchProfile,
+                fetchProfile,
             }}
         >
             {children}

@@ -17,14 +17,20 @@ import {
     Button,
 } from "@mui/material";
 
-import { Dashboard, Event, Logout } from "@mui/icons-material";
+import {
+    Dashboard,
+    Event,
+    Logout,
+    Feedback,
+} from "@mui/icons-material";
 
 import AdminDashboard from "../components/admin/AdminDashboard";
 import AdminEvents from "../components/admin/AdminEvents";
+import AdminComplaintsPage from "../pages/AdminComplaintsPage";
 
 const AdminHomePage = () => {
     const [activePage, setActivePage] = useState("dashboard");
-    const [openLogoutDialog, setOpenLogoutDialog] = useState(false); // state for dialog
+    const [openLogoutDialog, setOpenLogoutDialog] = useState(false);
     const { logout } = useAuth();
 
     const drawerContent = (
@@ -55,9 +61,20 @@ const AdminHomePage = () => {
                     <ListItemText primary="Events" />
                 </ListItemButton>
 
+                {/* Complaints */}
+                <ListItemButton
+                    selected={activePage === "complaints"}
+                    onClick={() => setActivePage("complaints")}
+                >
+                    <ListItemIcon>
+                        <Feedback />
+                    </ListItemIcon>
+                    <ListItemText primary="Complaints" />
+                </ListItemButton>
+
                 <Divider sx={{ my: 1 }} />
 
-                {/* Logout Button */}
+                {/* Logout */}
                 <ListItemButton onClick={() => setOpenLogoutDialog(true)}>
                     <ListItemIcon>
                         <Logout />
@@ -76,7 +93,9 @@ const AdminHomePage = () => {
                     Are you sure you want to logout?
                 </DialogContent>
                 <DialogActions>
-                    <Button onClick={() => setOpenLogoutDialog(false)}>Cancel</Button>
+                    <Button onClick={() => setOpenLogoutDialog(false)}>
+                        Cancel
+                    </Button>
                     <Button
                         color="error"
                         variant="contained"
@@ -96,6 +115,7 @@ const AdminHomePage = () => {
         <ResponsiveLayout drawerContent={drawerContent}>
             {activePage === "dashboard" && <AdminDashboard />}
             {activePage === "events" && <AdminEvents />}
+            {activePage === "complaints" && <AdminComplaintsPage />}
         </ResponsiveLayout>
     );
 };

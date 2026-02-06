@@ -10,6 +10,7 @@ import eventRoutes from "./routes/eventRoutes.js";
 import itemRoutes from "./routes/itemRoutes.js";
 import registrationRoutes from "./routes/registrationRoutes.js";
 import resultRoutes from "./routes/resultRoutes.js";
+import complaintRoutes from "./routes/complaintRoutes.js";
 
 dotenv.config();
 
@@ -29,6 +30,7 @@ app.use("/api/events", eventRoutes);
 app.use("/api/items", itemRoutes);
 app.use("/api/registrations", registrationRoutes);
 app.use("/api/results", resultRoutes);
+app.use("/api/complaints", complaintRoutes);
 
 /* Test Route */
 app.get("/", (req, res) => {

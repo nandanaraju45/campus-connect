@@ -22,11 +22,16 @@ import {
     Event,
     ListAlt,
     Logout,
+    ReportProblem,
+    Feedback,
 } from "@mui/icons-material";
 
 import FacultyCreateEvent from "../components/faculty/FacultyCreateEvent";
 import FacultyAllEvents from "../components/faculty/FacultyAllEvents";
 import FacultyMyEvents from "../components/faculty/FacultyMyEvents";
+
+import ReportIssuePage from "../pages/ReportIssuePage";
+import MyComplaintsPage from "../pages/MyComplaintsPage";
 
 import { useAuth } from "../context/AuthContext";
 
@@ -37,7 +42,7 @@ const FacultyHomePage = () => {
     const { logout } = useAuth();
 
     const handleLogout = () => {
-        logout(); // Call your useAuth logout function
+        logout();
     };
 
     const drawerContent = (
@@ -80,7 +85,30 @@ const FacultyHomePage = () => {
 
                 <Divider sx={{ my: 1 }} />
 
-                {/* Logout Button */}
+                {/* Complaints */}
+                <ListItemButton
+                    selected={activePage === "report-issue"}
+                    onClick={() => setActivePage("report-issue")}
+                >
+                    <ListItemIcon>
+                        <ReportProblem />
+                    </ListItemIcon>
+                    <ListItemText primary="Report Issue" />
+                </ListItemButton>
+
+                <ListItemButton
+                    selected={activePage === "my-complaints"}
+                    onClick={() => setActivePage("my-complaints")}
+                >
+                    <ListItemIcon>
+                        <Feedback />
+                    </ListItemIcon>
+                    <ListItemText primary="My Complaints" />
+                </ListItemButton>
+
+                <Divider sx={{ my: 1 }} />
+
+                {/* Logout */}
                 <ListItemButton onClick={() => setLogoutDialogOpen(true)}>
                     <ListItemIcon>
                         <Logout />
@@ -101,7 +129,10 @@ const FacultyHomePage = () => {
                     </DialogContentText>
                 </DialogContent>
                 <DialogActions>
-                    <Button onClick={() => setLogoutDialogOpen(false)} color="primary">
+                    <Button
+                        onClick={() => setLogoutDialogOpen(false)}
+                        color="primary"
+                    >
                         Cancel
                     </Button>
                     <Button
@@ -123,6 +154,8 @@ const FacultyHomePage = () => {
             {activePage === "create" && <FacultyCreateEvent />}
             {activePage === "all" && <FacultyAllEvents />}
             {activePage === "my" && <FacultyMyEvents />}
+            {activePage === "report-issue" && <ReportIssuePage />}
+            {activePage === "my-complaints" && <MyComplaintsPage />}
         </ResponsiveLayout>
     );
 };

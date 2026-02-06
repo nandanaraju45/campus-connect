@@ -21,14 +21,18 @@ import {
     EventAvailable,
     AssignmentTurnedIn,
     Logout,
+    ReportProblem,
+    Feedback,
 } from "@mui/icons-material";
 
 import StudentAllEvents from "../components/student/StudentAllEvents";
 import StudentMyEvents from "../components/student/StudentMyEvents";
+import ReportIssuePage from "../pages/ReportIssuePage";
+import MyComplaintsPage from "../pages/MyComplaintsPage";
 
 const StudentHomePage = () => {
     const [activeTab, setActiveTab] = useState("events");
-    const [logoutDialogOpen, setLogoutDialogOpen] = useState(false); // dialog state
+    const [logoutDialogOpen, setLogoutDialogOpen] = useState(false);
     const { logout } = useAuth();
 
     const handleLogoutClick = () => {
@@ -74,7 +78,30 @@ const StudentHomePage = () => {
 
                 <Divider sx={{ my: 1 }} />
 
-                {/* Logout Button */}
+                {/* Complaints */}
+                <ListItemButton
+                    selected={activeTab === "report-issue"}
+                    onClick={() => setActiveTab("report-issue")}
+                >
+                    <ListItemIcon>
+                        <ReportProblem />
+                    </ListItemIcon>
+                    <ListItemText primary="Report Issue" />
+                </ListItemButton>
+
+                <ListItemButton
+                    selected={activeTab === "my-complaints"}
+                    onClick={() => setActiveTab("my-complaints")}
+                >
+                    <ListItemIcon>
+                        <Feedback />
+                    </ListItemIcon>
+                    <ListItemText primary="My Complaints" />
+                </ListItemButton>
+
+                <Divider sx={{ my: 1 }} />
+
+                {/* Logout */}
                 <ListItemButton onClick={handleLogoutClick}>
                     <ListItemIcon>
                         <Logout />
@@ -89,6 +116,8 @@ const StudentHomePage = () => {
         <ResponsiveLayout drawerContent={drawerContent}>
             {activeTab === "events" && <StudentAllEvents />}
             {activeTab === "my-events" && <StudentMyEvents />}
+            {activeTab === "report-issue" && <ReportIssuePage />}
+            {activeTab === "my-complaints" && <MyComplaintsPage />}
 
             {/* Logout Confirmation Dialog */}
             <Dialog open={logoutDialogOpen} onClose={handleLogoutCancel}>
@@ -100,7 +129,11 @@ const StudentHomePage = () => {
                     <Button onClick={handleLogoutCancel} color="inherit">
                         Cancel
                     </Button>
-                    <Button onClick={handleLogoutConfirm} color="error" variant="contained">
+                    <Button
+                        onClick={handleLogoutConfirm}
+                        color="error"
+                        variant="contained"
+                    >
                         Logout
                     </Button>
                 </DialogActions>

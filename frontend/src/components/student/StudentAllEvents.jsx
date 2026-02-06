@@ -34,12 +34,13 @@ const StudentAllEvents = () => {
         fetchEvents();
     }, []);
 
-    if (loading)
+    if (loading) {
         return (
             <Box display="flex" justifyContent="center" mt={5}>
                 <CircularProgress />
             </Box>
         );
+    }
 
     return (
         <Box px={{ xs: 2, md: 4 }} py={4}>
@@ -54,31 +55,44 @@ const StudentAllEvents = () => {
                     </Typography>
                 ) : (
                     events.map((event) => (
-                        <Grid item xs={12} md={6} lg={4} key={event._id}>
+                        <Grid
+                            item
+                            xs={12}
+                            sm={6}
+                            md={4}
+                            lg={3}
+                            key={event._id}
+                            display="flex"
+                            justifyContent="center"
+                        >
                             <Card
                                 elevation={4}
                                 sx={{
-                                    height: 240,
+                                    width: 320, // ✅ fixed width
+                                    height: 160,
                                     borderRadius: 3,
                                     cursor: "pointer",
-                                    transition: "transform 0.2s, box-shadow 0.2s",
                                     display: "flex",
                                     flexDirection: "column",
+                                    overflow: "hidden", // ✅ prevent width expansion
+                                    transition:
+                                        "transform 0.2s ease, box-shadow 0.2s ease",
                                     "&:hover": {
                                         transform: "translateY(-5px)",
                                         boxShadow: 6,
                                     },
                                 }}
-                                onClick={() => navigate(`/events/${event._id}`)}
+                                onClick={() =>
+                                    navigate(`/events/${event._id}`)
+                                }
                             >
-                                {/* CardContent handles title, description, and chips */}
                                 <CardContent
                                     sx={{
                                         display: "flex",
                                         flexDirection: "column",
                                         justifyContent: "space-between",
                                         flexGrow: 1,
-                                        pb: 2, // padding bottom for chips
+                                        pb: 2,
                                     }}
                                 >
                                     {/* Title & Description */}
@@ -86,13 +100,16 @@ const StudentAllEvents = () => {
                                         <Stack
                                             direction="row"
                                             spacing={1}
-                                            mb={1}
                                             alignItems="center"
+                                            mb={1}
                                         >
-                                            <Event color="primary" />
+                                            <Event
+                                                color="primary"
+                                                fontSize="small"
+                                            />
                                             <Typography
-                                                fontWeight={600}
                                                 variant="h6"
+                                                fontWeight={600}
                                                 sx={{
                                                     whiteSpace: "nowrap",
                                                     overflow: "hidden",
@@ -119,7 +136,7 @@ const StudentAllEvents = () => {
                                         </Typography>
                                     </Box>
 
-                                    {/* Date & Venue Chips */}
+                                    {/* Date & Venue */}
                                     <Stack direction="row" spacing={1} mt={2}>
                                         <Chip
                                             label={new Date(
@@ -128,7 +145,20 @@ const StudentAllEvents = () => {
                                             size="small"
                                             color="primary"
                                         />
-                                        <Chip label={event.venue} size="small" />
+
+                                        <Chip
+                                            label={event.venue}
+                                            size="small"
+                                            sx={{
+                                                maxWidth: 140,
+                                                "& .MuiChip-label": {
+                                                    overflow: "hidden",
+                                                    textOverflow: "ellipsis",
+                                                    whiteSpace: "nowrap",
+                                                },
+                                            }}
+                                            title={event.venue}
+                                        />
                                     </Stack>
                                 </CardContent>
                             </Card>

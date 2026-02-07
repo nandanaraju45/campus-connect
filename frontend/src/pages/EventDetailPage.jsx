@@ -119,7 +119,7 @@ const EventDetailPage = () => {
                 "http://localhost:5000/api/registrations",
                 {
                     eventItem: item._id,
-                    paymentStatus: true, // ✅ free = paid
+                    paymentStatus: "paid", // ✅ free = paid
                 },
                 { headers: { Authorization: `Bearer ${token}` } }
             );

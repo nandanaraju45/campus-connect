@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 import {
     Typography,
     Card,
@@ -24,6 +25,7 @@ const AdminEvents = () => {
     const [loading, setLoading] = useState(true);
     const [openDialog, setOpenDialog] = useState(false);
     const [selectedEvent, setSelectedEvent] = useState(null);
+    const navigate = useNavigate();
     const [snackbar, setSnackbar] = useState({
         open: false,
         message: "",
@@ -134,6 +136,7 @@ const AdminEvents = () => {
                         >
                             <Card
                                 elevation={4}
+                                onClick={() => navigate(`/events/${event._id}`)}
                                 sx={{
                                     width: 320, // ✅ fixed width
                                     height: 200,
